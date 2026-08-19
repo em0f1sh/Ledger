@@ -28,4 +28,4 @@ Windows-only Electron 记账应用（离线、**绿色文件夹版，不打包 e
 
 - 图标：`build/icon.ico` 由 `build/generate-icon.js` 生成（纯 Node 像素光栅化，无图像库），改图标改脚本重跑即可。
 - 截图：`build/capture-scripts.js` 用 Electron + 脚本内生成的样例数据（临时 data 文件，不碰真实数据）截取四个页面到 `screenshots/`，改完 UI 可重跑刷新 README 截图。
-- 远端仓库：`origin` → GitHub `lianyuwww/jizhangben`（原 emofish，账号改名后 URL 会变，改完记得 `git remote set-url`）。提交作者目前是 `opencode <opencode@local>`。
+- 远端仓库：`origin` → GitHub `em0f1sh/Ledger`（原名 jizhangben/lianyuwww，账号改名后 URL 会变，改完记得 `git remote set-url`）。提交作者目前是 `opencode <opencode@local>`。
