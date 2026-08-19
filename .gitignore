@@ -1,0 +1,16 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+
+# 运行时数据（绝不提交：含个人账目）
+data.json
+crash.log
+*.log
+
+# 编辑器/系统
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

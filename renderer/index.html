@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <title>记账本</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">记账本</div>
+    <nav>
+      <button class="nav-btn active" data-view="record">记一笔</button>
+      <button class="nav-btn" data-view="stats">统计</button>
+      <button class="nav-btn" data-view="history">历史</button>
+      <button class="nav-btn" data-view="categories">分类管理</button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="goal-mini">
+        <div class="label">存钱目标</div>
+        <div class="bar"><div class="fill" id="goal-mini-fill"></div></div>
+        <div class="pct" id="goal-mini-pct">0%</div>
+      </div>
+      <div class="hint">数据存于本地 · 离线可用</div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <!-- 记账 -->
+    <section id="view-record" class="view active">
+      <h2>记一笔</h2>
+      <div class="record-box">
+        <div class="type-toggle">
+          <button class="type-btn expense active" data-type="expense">支出</button>
+          <button class="type-btn income" data-type="income">收入</button>
+        </div>
+        <div id="category-picker" class="category-picker"></div>
+        <div class="form-row">
+          <label>金额</label>
+          <input id="rec-amount" type="number" step="0.01" min="0.01" placeholder="0.00">
+        </div>
+        <div class="form-row">
+          <label>日期</label>
+          <input id="rec-date" type="date">
+        </div>
+        <div class="form-row">
+          <label>备注</label>
+          <input id="rec-remark" type="text" maxlength="50" placeholder="选填">
+        </div>
+        <button id="btn-save" class="primary-btn">记一笔</button>
+      </div>
+    </section>
+
+    <!-- 统计 -->
+    <section id="view-stats" class="view">
+      <div class="view-head">
+        <h2>统计</h2>
+        <div class="range-toggle">
+          <button class="range-btn active" data-range="month">月</button>
+          <button class="range-btn" data-range="year">年</button>
+        </div>
+        <input id="stat-year" type="number" min="2000" max="2100">
+        <input id="stat-month" type="number" min="1" max="12" placeholder="月">
+      </div>
+      <div class="goal-card">
+        <div class="goal-left">
+          <div class="goal-title">存钱目标</div>
+          <div class="goal-remain"><span class="cap" id="goal-cap">离目标还差</span><span id="goal-remain">¥0.00</span></div>
+          <div class="goal-note" id="goal-note">累计结余 ¥0.00</div>
+          <div class="goal-input">目标 <input id="goal-target" type="number" min="1"> 元</div>
+        </div>
+        <div class="goal-right">
+          <div class="bottle">
+            <svg class="bottle-svg" viewBox="0 0 140 200" aria-hidden="true">
+              <defs>
+                <clipPath id="jarClip">
+                  <path d="M54 14 H86 a6 6 0 0 1 6 6 v18 c8 6 12 16 12 28 v100 a16 16 0 0 1 -16 16 H36 a16 16 0 0 1 -16 -16 v-100 c0 -12 4 -22 12 -28 v-18 a6 6 0 0 1 6 -6 Z"></path>
+                </clipPath>
+                <linearGradient id="waterG" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#63d4de"></stop>
+                  <stop offset="1" stop-color="#0e7490"></stop>
+                </linearGradient>
+              </defs>
+              <g clip-path="url(#jarClip)">
+                <g id="water">
+                  <rect x="16" y="0" width="108" height="200" fill="url(#waterG)"></rect>
+                  <path d="M-160 0 q 40 -11 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 L 400 44 L -160 44 Z" fill="#1590a6" opacity="0.5">
+                    <animateTransform attributeName="transform" type="translate" from="0 0" to="-160 0" dur="9s" repeatCount="indefinite"></animateTransform>
+                  </path>
+                  <path d="M-160 0 q 40 -11 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 L 400 44 L -160 44 Z" fill="#5fd0db">
+                    <animateTransform attributeName="transform" type="translate" from="0 0" to="-160 0" dur="5s" repeatCount="indefinite"></animateTransform>
+                  </path>
+                  <circle class="bubble" cx="56" cy="26" r="4.5"></circle>
+                  <circle class="bubble" cx="84" cy="40" r="3.5"></circle>
+                  <circle class="bubble" cx="66" cy="14" r="3"></circle>
+                  <circle class="bubble" cx="76" cy="52" r="2.5"></circle>
+                </g>
+              </g>
+              <path class="glass-face" d="M54 14 H86 a6 6 0 0 1 6 6 v18 c8 6 12 16 12 28 v100 a16 16 0 0 1 -16 16 H36 a16 16 0 0 1 -16 -16 v-100 c0 -12 4 -22 12 -28 v-18 a6 6 0 0 1 6 -6 Z"></path>
+              <path class="shine" d="M38 52 c-5 30 -5 86 5 116"></path>
+            </svg>
+            <div class="bottle-caption"><span id="bottle-caption">0%</span><span class="cap">收入进度</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="cards">
+        <div class="card income-card"><div class="card-label">收入</div><div id="card-income" class="card-value">0.00</div></div>
+        <div class="card expense-card"><div class="card-label">支出</div><div id="card-expense" class="card-value">0.00</div></div>
+        <div class="card balance-card"><div class="card-label">结余</div><div id="card-balance" class="card-value">0.00</div></div>
+      </div>
+      <div class="charts">
+        <div class="chart-box"><div class="chart-title">支出分类占比</div><div id="chart-pie" class="chart"></div></div>
+        <div class="chart-box"><div class="chart-title">近 30 天收支趋势</div><div id="chart-trend" class="chart"></div></div>
+      </div>
+    </section>
+
+    <!-- 历史 -->
+    <section id="view-history" class="view">
+      <div class="view-head">
+        <h2>历史记录</h2>
+      </div>
+      <div class="filters">
+        <input id="his-start" type="date" placeholder="开始日期">
+        <span>至</span>
+        <input id="his-end" type="date" placeholder="结束日期">
+        <select id="his-type">
+          <option value="">全部类型</option>
+          <option value="expense">支出</option>
+          <option value="income">收入</option>
+        </select>
+        <select id="his-category"><option value="">全部分类</option></select>
+        <input id="his-keyword" type="text" placeholder="搜索备注...">
+        <button id="his-search" class="primary-btn small">查询</button>
+      </div>
+      <div class="history-list" id="history-list"></div>
+    </section>
+
+    <!-- 分类管理 -->
+    <section id="view-categories" class="view">
+      <div class="view-head">
+        <h2>分类管理</h2>
+      </div>
+      <div class="cat-section">
+        <h3>支出分类</h3>
+        <div id="cat-expense" class="cat-list"></div>
+      </div>
+      <div class="cat-section">
+        <h3>收入分类</h3>
+        <div id="cat-income" class="cat-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="modal-mask" class="modal-mask hidden">
+    <div class="modal">
+      <h3 id="modal-title"></h3>
+      <div id="modal-body"></div>
+      <div class="modal-actions">
+        <button id="modal-cancel" class="ghost-btn">取消</button>
+        <button id="modal-ok" class="primary-btn small">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="echarts.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
