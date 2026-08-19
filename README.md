@@ -52,13 +52,13 @@
 ## 快速开始
 
 ```bash
-# 安装依赖
+# 安装依赖（需要联网：会下载 Electron 本体）
 npm install
 
 # 开发运行
 npm start
 
-# 打包便携版 exe（输出到 dist/）
+# 打包便携版 exe（输出到 dist/，首次打包需联网下载打包工具）
 npm run dist
 ```
 
