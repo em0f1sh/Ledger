@@ -8,8 +8,7 @@ let mainWindow = null;
 
 process.on('uncaughtException', (e) => {
   try {
-    const dir = process.env.PORTABLE_EXECUTABLE_DIR || app.getPath('temp');
-    fs.writeFileSync(path.join(dir, 'crash.log'), new Date().toISOString() + '\n' + (e && e.stack ? e.stack : String(e)));
+    fs.writeFileSync(path.join(app.getPath('temp'), 'crash.log'), new Date().toISOString() + '\n' + (e && e.stack ? e.stack : String(e)));
   } catch (_) {}
 });
 
@@ -29,10 +28,52 @@ const PRESET_CATEGORIES = [
   { type: 'income', name: '其他' }
 ];
 
-function getDataDir() {
-  if (process.env.PORTABLE_EXECUTABLE_DIR) return process.env.PORTABLE_EXECUTABLE_DIR;
-  if (app.isPackaged) return path.dirname(app.getPath('exe'));
+function getDefaultDataDir() {
   return __dirname;
+}
+
+function loadConfig() {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(app.getPath('userData'), 'config.json'), 'utf8'));
+  } catch (e) {
+    return null;
+  }
+}
+
+function saveConfig(cfg) {
+  try {
+    fs.mkdirSync(app.getPath('userData'), { recursive: true });
+    fs.writeFileSync(path.join(app.getPath('userData'), 'config.json'), JSON.stringify(cfg, null, 2), 'utf8');
+  } catch (e) {}
+}
+
+function resolveDataDir() {
+  const cfg = loadConfig();
+  if (cfg && cfg.dataDir) return cfg.dataDir;
+
+  const defaultDir = getDefaultDataDir();
+  if (fs.existsSync(path.join(defaultDir, 'data.json'))) return defaultDir;
+
+  const choice = dialog.showMessageBoxSync(mainWindow, {
+    type: 'question',
+    title: '数据保存位置',
+    message: '第一次运行，账本数据保存到哪里？\n\n1) 用户数据目录（推荐，藏在系统里不碍事）\n2) 自定义文件夹\n3) 程序旁边（整包拷贝携带数据）',
+    buttons: ['用户数据目录', '自定义位置…', '程序旁边'],
+    defaultId: 0,
+    cancelId: 2
+  });
+  let dir = path.join(app.getPath('userData'), 'data');
+  if (choice === 1) {
+    const picked = dialog.showOpenDialogSync(mainWindow, {
+      title: '选择数据保存目录',
+      properties: ['openDirectory', 'createDirectory']
+    });
+    if (picked && picked[0]) dir = picked[0];
+  } else if (choice === 2) {
+    dir = defaultDir;
+  }
+  saveConfig({ dataDir: dir });
+  return dir;
 }
 
 function ensureWritable(dir) {
@@ -48,7 +89,7 @@ function ensureWritable(dir) {
 
 function initStore() {
   if (store) return;
-  let dir = getDataDir();
+  let dir = resolveDataDir();
   if (!ensureWritable(dir)) {
     const choice = dialog.showMessageBoxSync(mainWindow, {
       type: 'warning',
@@ -83,6 +124,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     title: '记账本',
+    icon: fs.existsSync(path.join(__dirname, 'build', 'icon.ico')) ? path.join(__dirname, 'build', 'icon.ico') : undefined,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,

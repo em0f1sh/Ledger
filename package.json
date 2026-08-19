@@ -4,38 +4,9 @@
   "description": "本地离线记账应用",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
-    "dist": "electron-builder --win portable"
-  },
-  "build": {
-    "appId": "com.local.jizhangben",
-    "productName": "记账本",
-    "files": [
-      "main.js",
-      "preload.js",
-      "store.js",
-      "renderer/**/*"
-    ],
-    "directories": {
-      "output": "dist"
-    },
-    "electronDist": "node_modules/electron/dist",
-    "win": {
-      "icon": "build/icon.ico",
-      "target": [
-        "portable"
-      ]
-    },
-    "asar": true,
-    "portable": {
-      "artifactName": "记账本.exe"
-    }
-  },
-  "dependencies": {
-    "echarts": "^5.6.0"
+    "start": "electron ."
   },
   "devDependencies": {
-    "electron": "^33.4.11",
-    "electron-builder": "^25.1.8"
+    "electron": "^33.4.11"
   }
 }
